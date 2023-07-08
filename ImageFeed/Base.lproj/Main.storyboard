@@ -39,12 +39,16 @@
                                                 </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3x3-a6-twT" userLabel="Like Button">
                                                     <rect key="frame" x="354" y="4" width="44" height="44"/>
-                                                    <color key="tintColor" name="YP White"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="44" id="kOw-07-vkU"/>
+                                                        <constraint firstAttribute="width" constant="44" id="xp4-Yz-AjS"/>
+                                                    </constraints>
+                                                    <color key="tintColor" name="YP White (Alpha 50)"/>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" image="Heart"/>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="27 августа 2022" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zxp-kr-zdm" userLabel="Date Label">
-                                                    <rect key="frame" x="24" y="203" width="374" height="16"/>
+                                                    <rect key="frame" x="24" y="203" width="366" height="16"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" name="YP White"/>
                                                     <nil key="highlightedColor"/>
@@ -53,7 +57,7 @@
                                             <constraints>
                                                 <constraint firstItem="Vwu-z1-hdk" firstAttribute="top" secondItem="htF-hx-2UX" secondAttribute="top" constant="4" id="5u3-4x-FU4"/>
                                                 <constraint firstItem="Vwu-z1-hdk" firstAttribute="leading" secondItem="htF-hx-2UX" secondAttribute="leading" constant="16" id="SeU-f9-ZLG"/>
-                                                <constraint firstItem="zxp-kr-zdm" firstAttribute="trailing" secondItem="Vwu-z1-hdk" secondAttribute="trailing" id="Zku-V3-1eS"/>
+                                                <constraint firstItem="zxp-kr-zdm" firstAttribute="trailing" secondItem="Vwu-z1-hdk" secondAttribute="trailing" constant="-8" id="Zku-V3-1eS"/>
                                                 <constraint firstItem="3x3-a6-twT" firstAttribute="trailing" secondItem="Vwu-z1-hdk" secondAttribute="trailing" id="aYN-vr-P1f"/>
                                                 <constraint firstItem="zxp-kr-zdm" firstAttribute="bottom" secondItem="Vwu-z1-hdk" secondAttribute="bottom" constant="-8" id="fz5-95-426"/>
                                                 <constraint firstAttribute="bottom" secondItem="Vwu-z1-hdk" secondAttribute="bottom" constant="4" id="r6V-oY-m1q"/>
@@ -102,6 +106,9 @@
         </namedColor>
         <namedColor name="YP White">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="YP White (Alpha 50)">
+            <color red="1" green="1" blue="1" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>

@@ -52,7 +52,7 @@ extension ImagesListViewController {
 		let isEvenCell = (indexPath.row + 1) % 2 == 0
 		cell.cellImageView.image = image
 		cell.dateLabel.text = dateFormatter.string(from: Date())
-		cell.likeButton.tintColor = isEvenCell ? UIColor.ypRed : UIColor.ypWhite
+		cell.likeButton.tintColor = isEvenCell ? UIColor.ypRed : UIColor.ypWhiteSemitransperent
 	}
 }
 
