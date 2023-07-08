@@ -8,9 +8,15 @@
 import UIKit
 
 class ImagesListCell: UITableViewCell {
-	@IBOutlet var cellImageView: UIImageView!
-	@IBOutlet var likeButton: UIButton!
-	@IBOutlet var dateLabel: UILabel!
+	@IBOutlet private var cellImageView: UIImageView!
+	@IBOutlet private var likeButton: UIButton!
+	@IBOutlet private var dateLabel: UILabel!
 	
 	static let reuseIdentifier = "ImagesListCell"
+	
+	func configureCell(with image: UIImage, isLiked: Bool, date: Date) {
+		cellImageView.image = image
+		likeButton.tintColor = isLiked ? .ypRed : .ypWhiteSemitransperent
+		dateLabel.text = ImageDateFormatter.shared.string(from: Date())
+	}
 }
