@@ -30,7 +30,8 @@ extension ImagesListViewController: UITableViewDataSource {
 		let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
 
 		guard let imageListCell = cell as? ImagesListCell else {
-			fatalError("Couldn't dequeue reusable cell as ImageListCell")
+			assertionFailure("Couldn't dequeue reusable cell as ImageListCell")
+			return UITableViewCell()
 		}
 
 		configCell(for: imageListCell, with: indexPath)
@@ -50,10 +51,6 @@ extension ImagesListViewController {
 }
 
 extension ImagesListViewController: UITableViewDelegate {
-	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		tableView.deselectRow(at: indexPath, animated: true)
-	}
-	
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		guard let image = UIImage(named: photosName[indexPath.row]) else {
 			return 0
