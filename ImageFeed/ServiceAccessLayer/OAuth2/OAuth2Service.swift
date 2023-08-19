@@ -15,13 +15,13 @@ enum NetworkError: Error {
 
 final class OAuth2Service {
 	func fetchAuthToken(code: String, completion: @escaping (Result<Data, Error>) -> Void) {
-		var request = URLRequest(url: UnsplashTokenRequestURL)
+		var request = URLRequest(url: UnsplashApiConstants.UnsplashTokenRequestURL)
 		
-		var body = URLComponents(url: UnsplashTokenRequestURL, resolvingAgainstBaseURL: false)!
+		var body = URLComponents(url: UnsplashApiConstants.UnsplashTokenRequestURL, resolvingAgainstBaseURL: false)!
 		body.queryItems = [
-			URLQueryItem(name: "client_id", value: AccessKey),
-			URLQueryItem(name: "client_secret", value: SecretKey),
-			URLQueryItem(name: "redirect_uri", value: RedirectURI),
+			URLQueryItem(name: "client_id", value: UnsplashApiConstants.AccessKey),
+			URLQueryItem(name: "client_secret", value: UnsplashApiConstants.SecretKey),
+			URLQueryItem(name: "redirect_uri", value: UnsplashApiConstants.RedirectURI),
 			URLQueryItem(name: "code", value: code),
 			URLQueryItem(name: "grant_type", value: "authorization_code")
 		]

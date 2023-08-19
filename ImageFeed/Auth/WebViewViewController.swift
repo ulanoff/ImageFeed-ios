@@ -14,22 +14,22 @@ protocol WebViewViewControllerDelegate: AnyObject {
 }
 
 final class WebViewViewController: UIViewController {
+	weak var delegate: WebViewViewControllerDelegate?
+	
 	@IBOutlet private var webView: WKWebView!
 	@IBOutlet private var progressBar: UIProgressView!
-	
-	weak var delegate: WebViewViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 		
 		webView.navigationDelegate = self
 		
-		var urlComponents = URLComponents(url: UnsplashAuthorizeURL, resolvingAgainstBaseURL: true)!
+		var urlComponents = URLComponents(url: UnsplashApiConstants.UnsplashAuthorizeURL, resolvingAgainstBaseURL: true)!
 		urlComponents.queryItems = [
-			URLQueryItem(name: "client_id", value: AccessKey),
-			URLQueryItem(name: "redirect_uri", value: RedirectURI),
-			URLQueryItem(name: "response_type", value: "code"),
-			URLQueryItem(name: "scope", value: AccessScope),
+			URLQueryItem(name: "client_id", value: UnsplashApiConstants.AccessKey),
+			URLQueryItem(name: "redirect_uri", value: UnsplashApiConstants.RedirectURI),
+			URLQueryItem(name: "response_type", value: UnsplashApiConstants.ResponseType),
+			URLQueryItem(name: "scope", value: UnsplashApiConstants.AccessScope),
 		]
 		let url = urlComponents.url!
 		
@@ -83,7 +83,7 @@ final class WebViewViewController: UIViewController {
 			let urlComponents = URLComponents(string: url.absoluteString),
 			urlComponents.path == "/oauth/authorize/native",
 			let items = urlComponents.queryItems,
-			let codeItem = items.first(where: { $0.name == "code" })
+			let codeItem = items.first(where: { $0.name == UnsplashApiConstants.ResponseType })
 		{
 			return codeItem.value
 		} else {

@@ -8,16 +8,15 @@
 import UIKit
 
 final class SplashViewController: UIViewController {
-	private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreenSegue"
-	private let ShowGalleryScreenSegueIdentifier = "ShowGalleryScreenSegue"
-	private let oauthTokenStorage = OAuth2TokenStorage()
+	private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreenSegue"
+	private let showGalleryScreenSegueIdentifier = "ShowGalleryScreenSegue"
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		if let _ = oauthTokenStorage.token {
-			performSegue(withIdentifier: ShowGalleryScreenSegueIdentifier, sender: nil)
+		if let _ = OAuth2TokenStorage.shared.token {
+			performSegue(withIdentifier: showGalleryScreenSegueIdentifier, sender: nil)
 		} else {
-			performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
+			performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
 		}
 	}
 	
@@ -30,9 +29,9 @@ final class SplashViewController: UIViewController {
 
 extension SplashViewController {
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == ShowAuthenticationScreenSegueIdentifier {
+		if segue.identifier == showAuthenticationScreenSegueIdentifier {
 			guard let navController = segue.destination as? UINavigationController,
-				  let viewController = navController.viewControllers[0] as? AuthViewController
+				  let viewController = navController.viewControllers.first as? AuthViewController
 			else {
 				assertionFailure("Failed to prepare for ShowAuthenticationScreenSegue")
 				return

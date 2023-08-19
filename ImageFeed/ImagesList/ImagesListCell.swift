@@ -15,6 +15,7 @@ class ImagesListCell: UITableViewCell {
 	static let reuseIdentifier = "ImagesListCell"
 	
 	func configureCell(with image: UIImage, isLiked: Bool, date: Date) {
+		selectionStyle = .none
 		cellImageView.image = image
 		likeButton.tintColor = isLiked ? .ypRed : .ypWhiteSemitransperent
 		dateLabel.text = ImageDateFormatter.shared.string(from: Date())

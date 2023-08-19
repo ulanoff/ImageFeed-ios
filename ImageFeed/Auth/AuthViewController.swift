@@ -12,15 +12,15 @@ protocol AuthViewControllerDelegate: AnyObject {
 }
 
 final class AuthViewController: UIViewController {
-	private let ShowWebViewSegueIdentifier = "ShowWebView"
-	private let oauth2Service = OAuth2Service()
-	private let oauth2TokenStorage = OAuth2TokenStorage()
 	weak var delegate: AuthViewControllerDelegate?
+	private let showWebViewSegueIdentifier = "ShowWebView"
+	private let oauth2Service = OAuth2Service()
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == ShowWebViewSegueIdentifier {
+		if segue.identifier == showWebViewSegueIdentifier {
 			guard let webViewVC = segue.destination as? WebViewViewController else {
-				fatalError("Failed to prepare for \(ShowWebViewSegueIdentifier)")
+				assertionFailure("Failed to prepare for \(showWebViewSegueIdentifier)")
+				return
 			}
 			webViewVC.delegate = self
 		} else {
@@ -39,12 +39,14 @@ extension AuthViewController: WebViewViewControllerDelegate {
 				decoder.keyDecodingStrategy = .convertFromSnakeCase
 				do {
 					let oAuthTokenResponseBody = try decoder.decode(OAuthTokenResponseBody.self, from: data)
-					oauth2TokenStorage.token = oAuthTokenResponseBody.accessToken
+					OAuth2TokenStorage.shared.token = oAuthTokenResponseBody.accessToken
 					self.delegate?.authViewController(self, didAuthenticateWithCode: code)
 				} catch {
 					assertionFailure("Failed to decode data as OAuthTokenResponseBody type")
 				}
 			case .failure(let error):
+				let alertModel = AlertModel(title: "Error", message: error.localizedDescription, buttonText: "Ok", completion: nil)
+				AlertPresenter.shared.presentAlert(in: self, with: alertModel)
 				assertionFailure(error.localizedDescription)
 			}
 		}

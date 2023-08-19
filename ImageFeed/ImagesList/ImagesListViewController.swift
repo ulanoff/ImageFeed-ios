@@ -77,7 +77,6 @@ extension ImagesListViewController: UITableViewDelegate {
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		performSegue(withIdentifier: showSingleImageSegueIdentifier, sender: indexPath)
-		tableView.deselectRow(at: indexPath, animated: true)
 	}
 }
 
