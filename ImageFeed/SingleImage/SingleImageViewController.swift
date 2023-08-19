@@ -16,7 +16,7 @@ final class SingleImageViewController: UIViewController {
 		}
 	}
 	
-	@IBOutlet weak var scrollView: UIScrollView!
+	@IBOutlet private weak var scrollView: UIScrollView!
 	@IBOutlet private var imageView: UIImageView!
 	
     override func viewDidLoad() {
@@ -27,6 +27,8 @@ final class SingleImageViewController: UIViewController {
 	override func viewDidLayoutSubviews() {
 		centerImage()
 	}
+	
+	override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 	
 	@IBAction private func didTapBackButton(_ sender: UIButton) {
 		dismiss(animated: true)
