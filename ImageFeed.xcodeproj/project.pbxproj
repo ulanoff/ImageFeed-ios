@@ -11,6 +11,7 @@
 		551509892A8D17920052EBAE /* OAuth2TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551509882A8D17920052EBAE /* OAuth2TokenStorage.swift */; };
 		5515098C2A8D36170052EBAE /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5515098B2A8D36170052EBAE /* SplashViewController.swift */; };
 		551AF4472AADCF09002F2908 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 551AF4462AADCF09002F2908 /* ProgressHUD */; };
+		551AF44A2AAE4BF8002F2908 /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551AF4492AAE4BF8002F2908 /* UIBlockingProgressHUD.swift */; };
 		555C65622A5857530098CDB2 /* UIColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555C65612A5857530098CDB2 /* UIColor+Ext.swift */; };
 		556A332B2A9104DA00A9995A /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556A332A2A9104DA00A9995A /* AlertPresenter.swift */; };
 		5574888E2A87BE4400721D93 /* OAuthTokenResponseBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5574888D2A87BE4400721D93 /* OAuthTokenResponseBody.swift */; };
@@ -34,6 +35,7 @@
 		550AE3462A59898A00804A82 /* ImageDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDateFormatter.swift; sourceTree = "<group>"; };
 		551509882A8D17920052EBAE /* OAuth2TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2TokenStorage.swift; sourceTree = "<group>"; };
 		5515098B2A8D36170052EBAE /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		551AF4492AAE4BF8002F2908 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		555C65612A5857530098CDB2 /* UIColor+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Ext.swift"; sourceTree = "<group>"; };
 		556A332A2A9104DA00A9995A /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		5574888D2A87BE4400721D93 /* OAuthTokenResponseBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthTokenResponseBody.swift; sourceTree = "<group>"; };
@@ -73,6 +75,14 @@
 				5515098B2A8D36170052EBAE /* SplashViewController.swift */,
 			);
 			path = SplashScreen;
+			sourceTree = "<group>";
+		};
+		551AF4482AAE4BC8002F2908 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				551AF4492AAE4BF8002F2908 /* UIBlockingProgressHUD.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		555C65602A58573B0098CDB2 /* Helpers */ = {
@@ -165,6 +175,7 @@
 				55A6B3062A61631F00AC776C /* SingleImage */,
 				556A33292A9104AB00A9995A /* Presentation */,
 				555C65602A58573B0098CDB2 /* Helpers */,
+				551AF4482AAE4BC8002F2908 /* Utilities */,
 				55C27FBC2A4EF50D00705795 /* Main.storyboard */,
 				55C27FBF2A4EF50E00705795 /* Assets.xcassets */,
 				55C27FC12A4EF50E00705795 /* LaunchScreen.storyboard */,
@@ -277,6 +288,7 @@
 				5577C1792A8634B200C9917B /* WebViewViewController.swift in Sources */,
 				550AE3472A59898A00804A82 /* ImageDateFormatter.swift in Sources */,
 				5515098C2A8D36170052EBAE /* SplashViewController.swift in Sources */,
+				551AF44A2AAE4BF8002F2908 /* UIBlockingProgressHUD.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
