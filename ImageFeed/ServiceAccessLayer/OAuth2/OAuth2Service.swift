@@ -14,7 +14,15 @@ enum NetworkError: Error {
 }
 
 final class OAuth2Service {
+	private let urlSession = URLSession.shared
+	private var task: URLSessionTask?
+	private var lastCode: String?
+	
 	func fetchAuthToken(code: String, completion: @escaping (Result<Data, Error>) -> Void) {
+		assert(Thread.isMainThread)
+		if lastCode == code { return }
+		task?.cancel()
+		lastCode = code
 		var request = URLRequest(url: UnsplashApiConstants.UnsplashTokenRequestURL)
 		
 		var body = URLComponents(url: UnsplashApiConstants.UnsplashTokenRequestURL, resolvingAgainstBaseURL: false)!
@@ -31,28 +39,27 @@ final class OAuth2Service {
 		request.httpBody = bodyData
 		
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
-			if let data,
-			   let response,
-			   let statusCode = (response as? HTTPURLResponse)?.statusCode
-			{
-				if 200..<300 ~= statusCode {
-					DispatchQueue.main.async {
+			DispatchQueue.main.async { [weak self] in
+				guard let self else { return }
+				if let data,
+				   let response,
+				   let statusCode = (response as? HTTPURLResponse)?.statusCode
+				{
+					if 200..<300 ~= statusCode {
 						completion(.success(data))
-					}
-				} else {
-					DispatchQueue.main.async {
+					} else {
 						completion(.failure(NetworkError.httpStatusCode(statusCode)))
+						self.lastCode = nil
 					}
 				}
-			}
-			else if let error {
-				DispatchQueue.main.async {
+				else if let error {
 					completion(.failure(NetworkError.urlRequestError(error)))
-				}
-			} else {
-				DispatchQueue.main.async {
+					self.lastCode = nil
+				} else {
 					completion(.failure(NetworkError.urlSessionError))
+					self.lastCode = nil
 				}
+				self.task = nil
 			}
 		}
 		task.resume()

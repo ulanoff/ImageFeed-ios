@@ -32,7 +32,7 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
 	func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-		ProgressHUD.show()
+		UIBlockingProgressHUD.show()
 		oauth2Service.fetchAuthToken(code: code) { [weak self] result in
 			guard let self else { return }
 			switch result {
@@ -46,12 +46,12 @@ extension AuthViewController: WebViewViewControllerDelegate {
 				} catch {
 					assertionFailure("Failed to decode data as OAuthTokenResponseBody type")
 				}
-				ProgressHUD.dismiss()
+				UIBlockingProgressHUD.dismiss()
 			case .failure(let error):
 				let alertModel = AlertModel(title: "Error", message: error.localizedDescription, buttonText: "Ok", completion: nil)
 				AlertPresenter.shared.presentAlert(in: self, with: alertModel)
 				assertionFailure(error.localizedDescription)
-				ProgressHUD.dismiss()
+				UIBlockingProgressHUD.dismiss()
 			}
 		}
 	}
