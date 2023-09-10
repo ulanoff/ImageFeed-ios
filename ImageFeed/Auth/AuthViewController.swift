@@ -42,7 +42,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
 				do {
 					let oAuthTokenResponseBody = try decoder.decode(OAuthTokenResponseBody.self, from: data)
 					OAuth2TokenStorage.shared.token = oAuthTokenResponseBody.accessToken
-					self.delegate?.authViewController(self, didAuthenticateWithCode: code)
+					self.delegate?.authViewController(self, didAuthenticateWithCode: oAuthTokenResponseBody.accessToken)
 				} catch {
 					assertionFailure("Failed to decode data as OAuthTokenResponseBody type")
 				}
