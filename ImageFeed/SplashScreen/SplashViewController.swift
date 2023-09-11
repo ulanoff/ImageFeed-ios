@@ -10,11 +10,11 @@ import UIKit
 final class SplashViewController: UIViewController {
 	private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreenSegue"
 	private let showGalleryScreenSegueIdentifier = "ShowGalleryScreenSegue"
-	
+	private let profileService = ProfileService.shared
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		if let _ = OAuth2TokenStorage.shared.token {
-			performSegue(withIdentifier: showGalleryScreenSegueIdentifier, sender: nil)
+		if let token = OAuth2TokenStorage.shared.token {
+			fetchProfile(code: token)
 		} else {
 			performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
 		}
@@ -24,6 +24,22 @@ final class SplashViewController: UIViewController {
 		guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
 		let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "TabBarViewController")
 		window.rootViewController = tabBarController
+	}
+	
+	private func fetchProfile(code: String) {
+		profileService.fetchProfile(code) { [weak self] result in
+			guard let self else { return }
+			switch result {
+			case .success(_):
+				switchToTabBarController()
+			case .failure(let error):
+				let alertModel = AlertModel(title: "Error",
+											message: "Failed to load profile: \(error.localizedDescription)",
+											buttonText: "Ok",
+											completion: nil)
+				AlertPresenter.shared.presentAlert(in: self, with: alertModel)
+			}
+		}
 	}
 }
 
@@ -45,6 +61,6 @@ extension SplashViewController {
 
 extension SplashViewController: AuthViewControllerDelegate {
 	func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-		switchToTabBarController()
+		fetchProfile(code: code)
 	}
 }

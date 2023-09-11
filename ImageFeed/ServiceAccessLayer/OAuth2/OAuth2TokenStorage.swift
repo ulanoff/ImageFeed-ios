@@ -14,7 +14,8 @@ final class OAuth2TokenStorage {
 	
 	var token: String? {
 		get {
-			UserDefaults.standard.string(forKey: bearerTokenKey)
+//			UserDefaults.standard.string(forKey: bearerTokenKey)
+			return "1234"
 		}
 		set {
 			UserDefaults.standard.setValue(newValue, forKey: bearerTokenKey)

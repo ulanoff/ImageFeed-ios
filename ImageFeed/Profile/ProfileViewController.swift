@@ -13,10 +13,16 @@ final class ProfileViewController: UIViewController {
 	private var descriptionLabel: UILabel!
 	private var profilePicture: ProfilePicture!
 	private var logoutButton: UIButton!
+	private var profileService = ProfileService.shared
 	
     override func viewDidLoad() {
         super.viewDidLoad()
 		setupUI()
+		if let profile = profileService.profile {
+			updateProfileDetails(profile: profile)
+		} else {
+			
+		}
     }
 	
 	override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
@@ -26,6 +32,12 @@ final class ProfileViewController: UIViewController {
 	}
 }
 private extension ProfileViewController {
+	func updateProfileDetails(profile: Profile) {
+		nameLabel.text = profile.name
+		idLabel.text = profile.loginName
+		descriptionLabel.text = profile.bio
+	}
+	
 	func setupUI() {
 		configureNameLabel()
 		configureIdLabel()

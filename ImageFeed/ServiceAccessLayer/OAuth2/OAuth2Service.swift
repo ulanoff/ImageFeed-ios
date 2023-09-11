@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum NetworkError: Error {
+fileprivate enum NetworkError: Error {
 	case httpStatusCode(Int)
 	case urlRequestError(Error)
 	case urlSessionError
@@ -62,6 +62,7 @@ final class OAuth2Service {
 				self.task = nil
 			}
 		}
+		self.task = task
 		task.resume()
 	}
 }
