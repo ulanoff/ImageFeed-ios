@@ -36,19 +36,15 @@ extension AuthViewController: WebViewViewControllerDelegate {
 		oauth2Service.fetchAuthToken(code: code) { [weak self] result in
 			guard let self else { return }
 			switch result {
-			case .success(let data):
-				let decoder = JSONDecoder()
-				decoder.keyDecodingStrategy = .convertFromSnakeCase
-				do {
-					let oAuthTokenResponseBody = try decoder.decode(OAuthTokenResponseBody.self, from: data)
-					OAuth2TokenStorage.shared.token = oAuthTokenResponseBody.accessToken
-					self.delegate?.authViewController(self, didAuthenticateWithCode: oAuthTokenResponseBody.accessToken)
-				} catch {
-					assertionFailure("Failed to decode data as OAuthTokenResponseBody type")
-				}
+			case .success(let token):
+				OAuth2TokenStorage.shared.token = token
+				self.delegate?.authViewController(self, didAuthenticateWithCode: token)
 				UIBlockingProgressHUD.dismiss()
 			case .failure(let error):
-				let alertModel = AlertModel(title: "Error", message: error.localizedDescription, buttonText: "Ok", completion: nil)
+				let alertModel = AlertModel(title: "Что-то пошло не так(",
+											message: "Не удалось войти в систему",
+											buttonText: "Ок",
+											completion: nil)
 				AlertPresenter.shared.presentAlert(in: self, with: alertModel)
 				assertionFailure(error.localizedDescription)
 				UIBlockingProgressHUD.dismiss()

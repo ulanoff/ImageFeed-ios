@@ -7,10 +7,11 @@
 
 import Foundation
 
-fileprivate enum NetworkError: Error {
-	case httpStatusCode(Int)
-	case urlRequestError(Error)
-	case urlSessionError
+struct OAuthTokenResponseBody: Decodable {
+	let accessToken: String
+	let tokenType: String
+	let scope: String
+	let createdAt: Int
 }
 
 final class OAuth2Service {
@@ -18,7 +19,7 @@ final class OAuth2Service {
 	private var task: URLSessionTask?
 	private var lastCode: String?
 	
-	func fetchAuthToken(code: String, completion: @escaping (Result<Data, Error>) -> Void) {
+	func fetchAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
 		assert(Thread.isMainThread)
 		if lastCode == code { return }
 		task?.cancel()
@@ -38,29 +39,17 @@ final class OAuth2Service {
 		request.httpMethod = "POST"
 		request.httpBody = bodyData
 		
-		let task = URLSession.shared.dataTask(with: request) { data, response, error in
-			DispatchQueue.main.async { [weak self] in
-				guard let self else { return }
-				if let data,
-				   let response,
-				   let statusCode = (response as? HTTPURLResponse)?.statusCode
-				{
-					if 200..<300 ~= statusCode {
-						completion(.success(data))
-					} else {
-						completion(.failure(NetworkError.httpStatusCode(statusCode)))
-						self.lastCode = nil
-					}
-				}
-				else if let error {
-					completion(.failure(NetworkError.urlRequestError(error)))
-					self.lastCode = nil
-				} else {
-					completion(.failure(NetworkError.urlSessionError))
-					self.lastCode = nil
-				}
-				self.task = nil
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+			guard let self else { return }
+			switch result {
+			case .success(let tokenData):
+				let token = tokenData.accessToken
+				completion(.success(token))
+			case .failure(let error):
+				completion(.failure(error))
+				self.lastCode = nil
 			}
+			self.task = nil
 		}
 		self.task = task
 		task.resume()

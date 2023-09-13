@@ -30,14 +30,26 @@ final class SplashViewController: UIViewController {
 		profileService.fetchProfile(code) { [weak self] result in
 			guard let self else { return }
 			switch result {
-			case .success(_):
+			case .success(let profile):
 				switchToTabBarController()
-			case .failure(let error):
-				let alertModel = AlertModel(title: "Error",
-											message: "Failed to load profile: \(error.localizedDescription)",
-											buttonText: "Ok",
+				fetchProfileImage(username: profile.username)
+			case .failure(_):
+				let alertModel = AlertModel(title: "Что-то пошло не так(",
+											message: "Не удалось войти в систему",
+											buttonText: "Ок",
 											completion: nil)
 				AlertPresenter.shared.presentAlert(in: self, with: alertModel)
+			}
+		}
+	}
+	
+	private func fetchProfileImage(username: String) {
+		ProfileImageService.shared.fetchProfileImageURL(username: username) { result in
+			switch result {
+			case .success(_):
+				return
+			case .failure(let error):
+				assertionFailure("Failed to load avatar: \(error.localizedDescription)")
 			}
 		}
 	}

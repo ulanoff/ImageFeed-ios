@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
 	private var nameLabel: UILabel!
@@ -15,13 +16,15 @@ final class ProfileViewController: UIViewController {
 	private var logoutButton: UIButton!
 	private var profileService = ProfileService.shared
 	
+	private var profileImageServiceObserver: NSObjectProtocol?
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 		setupUI()
+		addAvatarUpdateObserver()
+		updateAvatar()
 		if let profile = profileService.profile {
 			updateProfileDetails(profile: profile)
-		} else {
-			
 		}
     }
 	
@@ -36,6 +39,26 @@ private extension ProfileViewController {
 		nameLabel.text = profile.name
 		idLabel.text = profile.loginName
 		descriptionLabel.text = profile.bio
+	}
+	
+	func addAvatarUpdateObserver() {
+		profileImageServiceObserver = NotificationCenter.default
+			.addObserver(forName: ProfileImageService.didChangeNotification,
+						 object: nil,
+						 queue: .main
+			) { [weak self] _ in
+				guard let self else { return }
+				self.updateAvatar()
+			}
+	}
+	
+	func updateAvatar() {
+		guard
+			let profileImageURL = ProfileImageService.shared.avatarURL,
+			let url = URL(string: profileImageURL)
+		else { return }
+		profilePicture.kf.setImage(with: url,
+								   placeholder: UIImage(named: "avatar_placeholder"))
 	}
 	
 	func setupUI() {

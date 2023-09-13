@@ -7,13 +7,6 @@
 
 import Foundation
 
-fileprivate enum NetworkError: Error {
-	case httpStatusCode(Int)
-	case urlRequestError(Error)
-	case urlSessionError
-	case profileDecodingError
-}
-
 struct Profile {
 	let username: String
 	let name: String
@@ -61,36 +54,18 @@ final class ProfileService {
 		
 		var request = URLRequest(url: url)
 		request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-		let task = urlSession.dataTask(with: request) { data, response, error in
-			DispatchQueue.main.async { [weak self] in
-				guard let self else { return }
-				if let data,
-				   let response,
-				   let statusCode = (response as? HTTPURLResponse)?.statusCode
-				{
-					if 200..<300 ~= statusCode {
-						do {
-							let profileData = try self.decoder.decode(ProfileResult.self, from: data)
-							let profile = Profile(profileData: profileData)
-							ProfileService.shared.profile = profile
-							completion(.success(profile))
-						} catch {
-							completion(.failure(NetworkError.profileDecodingError))
-							self.lastToken = nil
-						}
-					} else {
-						completion(.failure(NetworkError.httpStatusCode(statusCode)))
-						self.lastToken = nil
-					}
-				} else if let error {
-					completion(.failure(error))
-					self.lastToken = nil
-				} else {
-					completion(.failure(NetworkError.urlSessionError))
-					self.lastToken = nil
-				}
-				self.task = nil
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
+			guard let self else { return }
+			switch result {
+			case .success(let profileData):
+				let profile = Profile(profileData: profileData)
+				ProfileService.shared.profile = profile
+				completion(.success(profile))
+			case .failure(let error):
+				completion(.failure(error))
+				self.lastToken = nil
 			}
+			self.task = nil
 		}
 		self.task = task
 		task.resume()
