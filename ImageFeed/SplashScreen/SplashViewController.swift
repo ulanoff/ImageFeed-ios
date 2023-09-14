@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftKeychainWrapper
 
 final class SplashViewController: UIViewController {
 	private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreenSegue"
@@ -13,7 +14,7 @@ final class SplashViewController: UIViewController {
 	private let profileService = ProfileService.shared
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		if let token = OAuth2TokenStorage.shared.token {
+		if let token = KeychainWrapper.standard.string(forKey: "Auth Token") {
 			fetchProfile(code: token)
 		} else {
 			performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)

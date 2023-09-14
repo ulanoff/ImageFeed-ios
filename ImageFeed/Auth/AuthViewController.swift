@@ -7,6 +7,7 @@
 
 import UIKit
 import ProgressHUD
+import SwiftKeychainWrapper
 
 protocol AuthViewControllerDelegate: AnyObject {
 	func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String)
@@ -37,7 +38,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
 			guard let self else { return }
 			switch result {
 			case .success(let token):
-				OAuth2TokenStorage.shared.token = token
+				KeychainWrapper.standard.set(token, forKey: "Auth Token")
 				self.delegate?.authViewController(self, didAuthenticateWithCode: token)
 				UIBlockingProgressHUD.dismiss()
 			case .failure(let error):

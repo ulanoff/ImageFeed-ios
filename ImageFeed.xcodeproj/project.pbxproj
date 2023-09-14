@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		550AE3472A59898A00804A82 /* ImageDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550AE3462A59898A00804A82 /* ImageDateFormatter.swift */; };
-		551509892A8D17920052EBAE /* OAuth2TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551509882A8D17920052EBAE /* OAuth2TokenStorage.swift */; };
 		5515098C2A8D36170052EBAE /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5515098B2A8D36170052EBAE /* SplashViewController.swift */; };
 		551AF4472AADCF09002F2908 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 551AF4462AADCF09002F2908 /* ProgressHUD */; };
 		551AF44A2AAE4BF8002F2908 /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551AF4492AAE4BF8002F2908 /* UIBlockingProgressHUD.swift */; };
@@ -38,7 +37,6 @@
 
 /* Begin PBXFileReference section */
 		550AE3462A59898A00804A82 /* ImageDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDateFormatter.swift; sourceTree = "<group>"; };
-		551509882A8D17920052EBAE /* OAuth2TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2TokenStorage.swift; sourceTree = "<group>"; };
 		5515098B2A8D36170052EBAE /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		551AF4492AAE4BF8002F2908 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		555A26C22AB1F5C700E12C1C /* URLSession+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+Ext.swift"; sourceTree = "<group>"; };
@@ -135,7 +133,6 @@
 			isa = PBXGroup;
 			children = (
 				5574888F2A87BF0A00721D93 /* OAuth2Service.swift */,
-				551509882A8D17920052EBAE /* OAuth2TokenStorage.swift */,
 			);
 			path = OAuth2;
 			sourceTree = "<group>";
@@ -310,7 +307,6 @@
 				55A6B2FF2A606AEA00AC776C /* ProfileViewController.swift in Sources */,
 				556A332B2A9104DA00A9995A /* AlertPresenter.swift in Sources */,
 				55C27FB92A4EF50D00705795 /* SceneDelegate.swift in Sources */,
-				551509892A8D17920052EBAE /* OAuth2TokenStorage.swift in Sources */,
 				55EAA1922AAF55AA00DF2B50 /* ProfileService.swift in Sources */,
 				5577C1792A8634B200C9917B /* WebViewViewController.swift in Sources */,
 				550AE3472A59898A00804A82 /* ImageDateFormatter.swift in Sources */,
