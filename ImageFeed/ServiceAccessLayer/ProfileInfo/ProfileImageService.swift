@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftKeychainWrapper
 
 struct UserResult: Codable {
 	let profileImage: ProfileImage
@@ -37,7 +36,7 @@ final class ProfileImageService {
 		lastUsername = username
 		
 		guard let url = URL(string: "\(UnsplashApiConstants.DefaultBaseURL)/users/\(username)"),
-			  let accessToken = KeychainWrapper.standard.string(forKey: "Auth Token")
+			  let accessToken = OAuth2TokenStorage.shared.token
 		else {
 			assertionFailure("Failed to create URL or get token from storage")
 			return

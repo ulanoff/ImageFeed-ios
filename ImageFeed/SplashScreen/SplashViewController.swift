@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SwiftKeychainWrapper
 
 final class SplashViewController: UIViewController {
 	private let profileService = ProfileService.shared
@@ -20,7 +19,7 @@ final class SplashViewController: UIViewController {
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		if let token = KeychainWrapper.standard.string(forKey: "Auth Token") {
+		if let token = OAuth2TokenStorage.shared.token {
 			fetchProfile(code: token)
 		} else {
 			let authVC = AuthViewController()
