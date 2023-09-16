@@ -16,8 +16,10 @@ final class SingleImageViewController: UIViewController {
 		}
 	}
 	
-	@IBOutlet private weak var scrollView: UIScrollView!
-	@IBOutlet private var imageView: UIImageView!
+	private var scrollView = UIScrollView()
+	private var imageView = UIImageView()
+	private var backButton = UIButton()
+	private var shareButton = UIButton()
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,11 +32,11 @@ final class SingleImageViewController: UIViewController {
 	
 	override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 	
-	@IBAction private func didTapBackButton(_ sender: UIButton) {
+	@objc private func didTapBackButton(_ sender: UIButton) {
 		dismiss(animated: true)
 	}
 	
-	@IBAction private func didTapShareButton(_ sender: UIButton) {
+	@objc private func didTapShareButton(_ sender: UIButton) {
 		guard let image else { return }
 		let activity = UIActivityViewController(activityItems: [image], applicationActivities: nil)
 		present(activity, animated: true)
@@ -45,6 +47,17 @@ private extension SingleImageViewController {
 	func setupUI() {
 		configureScrollView()
 		configureImageView()
+		configureBackButton()
+		configureShareButton()
+		configureMainView()
+		configureConstraints()
+	}
+	
+	func configureMainView() {
+		view.backgroundColor = .ypBlack
+		[scrollView, backButton, shareButton].forEach {
+			view.addSubview($0)
+		}
 	}
 	
 	func configureImageView() {
@@ -53,8 +66,53 @@ private extension SingleImageViewController {
 	}
 	
 	func configureScrollView() {
+		scrollView.addSubview(imageView)
+		scrollView.delegate = self
 		scrollView.minimumZoomScale = 0.75
 		scrollView.maximumZoomScale = 1.5
+	}
+	
+	func configureBackButton() {
+		backButton.setImage(UIImage(named: "Backward"), for: .normal)
+		backButton.tintColor = .ypWhite
+		backButton.addTarget(self, action: #selector(didTapBackButton(_:)), for: .touchUpInside)
+	}
+	
+	func configureShareButton() {
+		shareButton.setImage(UIImage(named: "Share"), for: .normal)
+		shareButton.backgroundColor = .ypBlack
+		shareButton.tintColor = .ypWhite
+		shareButton.layer.cornerRadius = 25
+		shareButton.addTarget(self, action: #selector(didTapShareButton(_:)), for: .touchUpInside)
+	}
+	
+	func configureConstraints() {
+		[scrollView, imageView, backButton, shareButton].forEach {
+			$0?.translatesAutoresizingMaskIntoConstraints = false
+		}
+		
+		let safeArea = view.safeAreaLayoutGuide
+		NSLayoutConstraint.activate([
+			scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+			scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+			scrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+			scrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+			
+			imageView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+			imageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+			imageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+			imageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+			
+			backButton.widthAnchor.constraint(equalToConstant: 48),
+			backButton.heightAnchor.constraint(equalToConstant: 48),
+			backButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 8),
+			backButton.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 8),
+			
+			shareButton.widthAnchor.constraint(equalToConstant: 50),
+			shareButton.heightAnchor.constraint(equalToConstant: 50),
+			shareButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			shareButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -17)
+		])
 	}
 	
 	func rescaleAndCenterImageInScrollView(image: UIImage) {

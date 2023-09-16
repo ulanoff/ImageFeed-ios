@@ -103,7 +103,7 @@ private extension ProfileViewController {
 	}
 	
 	func configureProfilePicture() {
-		let image = UIImage(named: "ProfilePic") ?? UIImage()
+		let image = UIImage(named: "avatar_placeholder") ?? UIImage()
 		profilePicture = ProfilePicture(image: image)
 	}
 	

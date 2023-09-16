@@ -15,19 +15,71 @@ protocol AuthViewControllerDelegate: AnyObject {
 
 final class AuthViewController: UIViewController {
 	weak var delegate: AuthViewControllerDelegate?
-	private let showWebViewSegueIdentifier = "ShowWebView"
 	private let oauth2Service = OAuth2Service()
 	
-	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == showWebViewSegueIdentifier {
-			guard let webViewVC = segue.destination as? WebViewViewController else {
-				assertionFailure("Failed to prepare for \(showWebViewSegueIdentifier)")
-				return
-			}
-			webViewVC.delegate = self
-		} else {
-			super.prepare(for: segue, sender: sender)
+	private var unsplashLogoImageView: UIImageView!
+	private var loginButton: UIButton!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		setupUI()
+	}
+	
+	@objc private func didTapLoginButton(_ sender: UIButton?) {
+		let webViewVC = WebViewViewController()
+		webViewVC.delegate = self
+		webViewVC.modalPresentationStyle = .fullScreen
+		present(webViewVC, animated: true)
+	}
+}
+
+private extension AuthViewController {
+	func setupUI() {
+		configureLogoImageView()
+		configureLoginButton()
+		configureMainView()
+		configureConstraints()
+	}
+	
+	func configureMainView() {
+		view.backgroundColor = .ypBlack
+		[unsplashLogoImageView, loginButton].forEach {
+			view.addSubview($0)
 		}
+	}
+	
+	func configureLogoImageView() {
+		unsplashLogoImageView = UIImageView()
+		unsplashLogoImageView.image = UIImage(named: "unsplash_logo")
+		unsplashLogoImageView.tintColor = .white
+	}
+	
+	func configureLoginButton() {
+		loginButton = UIButton()
+		loginButton.setTitle("Войти", for: .normal)
+		loginButton.setTitleColor(.ypBlack, for: .normal)
+		loginButton.titleLabel?.font = .boldSystemFont(ofSize: 17)
+		loginButton.backgroundColor = .ypWhite
+		loginButton.layer.cornerRadius = 16
+		loginButton.addTarget(self, action: #selector(didTapLoginButton(_:)), for: .touchUpInside)
+	}
+	
+	func configureConstraints() {
+		let safeArea = view.safeAreaLayoutGuide
+		[unsplashLogoImageView, loginButton].forEach {
+			$0?.translatesAutoresizingMaskIntoConstraints = false
+		}
+		NSLayoutConstraint.activate([
+			unsplashLogoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+			unsplashLogoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			unsplashLogoImageView.widthAnchor.constraint(equalToConstant: 60),
+			unsplashLogoImageView.heightAnchor.constraint(equalToConstant: 60),
+			
+			loginButton.heightAnchor.constraint(equalToConstant: 48),
+			loginButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
+			loginButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
+			loginButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -90),
+		])
 	}
 }
 

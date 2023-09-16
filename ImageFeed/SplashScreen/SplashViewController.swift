@@ -9,21 +9,30 @@ import UIKit
 import SwiftKeychainWrapper
 
 final class SplashViewController: UIViewController {
-	private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreenSegue"
-	private let showGalleryScreenSegueIdentifier = "ShowGalleryScreenSegue"
 	private let profileService = ProfileService.shared
+	
+	private var appLogoImage: UIImageView!
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		setupUI()
+	}
+	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		if let token = KeychainWrapper.standard.string(forKey: "Auth Token") {
 			fetchProfile(code: token)
 		} else {
-			performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
+			let authVC = AuthViewController()
+			authVC.delegate = self
+			authVC.modalPresentationStyle = .fullScreen
+			present(authVC, animated: true)
 		}
 	}
 	
 	private func switchToTabBarController() {
 		guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
-		let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "TabBarViewController")
+		let tabBarController = TabBarController()
 		window.rootViewController = tabBarController
 	}
 	
@@ -56,19 +65,31 @@ final class SplashViewController: UIViewController {
 	}
 }
 
-extension SplashViewController {
-	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == showAuthenticationScreenSegueIdentifier {
-			guard let navController = segue.destination as? UINavigationController,
-				  let viewController = navController.viewControllers.first as? AuthViewController
-			else {
-				assertionFailure("Failed to prepare for ShowAuthenticationScreenSegue")
-				return
-			}
-			viewController.delegate = self
-		} else {
-			super.prepare(for: segue, sender: sender)
-		}
+private extension SplashViewController {
+	func setupUI() {
+		configureAppLogoImageView()
+		configureMainView()
+		configureConstraints()
+	}
+	
+	func configureMainView() {
+		view.backgroundColor = .ypBlack
+		view.addSubview(appLogoImage)
+	}
+	
+	func configureAppLogoImageView() {
+		appLogoImage = UIImageView()
+		appLogoImage.tintColor = .white
+		appLogoImage.image = UIImage(named: "logo")
+	}
+	
+	func configureConstraints() {
+		appLogoImage.translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			appLogoImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			appLogoImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+			appLogoImage.widthAnchor.constraint(equalToConstant: 75)
+		])
 	}
 }
 
