@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
 	private var nameLabel: UILabel!
@@ -13,10 +14,18 @@ final class ProfileViewController: UIViewController {
 	private var descriptionLabel: UILabel!
 	private var profilePicture: ProfilePicture!
 	private var logoutButton: UIButton!
+	private var profileService = ProfileService.shared
+	
+	private var profileImageServiceObserver: NSObjectProtocol?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
 		setupUI()
+		addAvatarUpdateObserver()
+		updateAvatar()
+		if let profile = profileService.profile {
+			updateProfileDetails(profile: profile)
+		}
     }
 	
 	override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
@@ -26,6 +35,32 @@ final class ProfileViewController: UIViewController {
 	}
 }
 private extension ProfileViewController {
+	func updateProfileDetails(profile: Profile) {
+		nameLabel.text = profile.name
+		idLabel.text = profile.loginName
+		descriptionLabel.text = profile.bio
+	}
+	
+	func addAvatarUpdateObserver() {
+		profileImageServiceObserver = NotificationCenter.default
+			.addObserver(forName: ProfileImageService.didChangeNotification,
+						 object: nil,
+						 queue: .main
+			) { [weak self] _ in
+				guard let self else { return }
+				self.updateAvatar()
+			}
+	}
+	
+	func updateAvatar() {
+		guard
+			let profileImageURL = ProfileImageService.shared.avatarURL,
+			let url = URL(string: profileImageURL)
+		else { return }
+		profilePicture.kf.setImage(with: url,
+								   placeholder: UIImage(named: "avatar_placeholder"))
+	}
+	
 	func setupUI() {
 		configureNameLabel()
 		configureIdLabel()
@@ -68,7 +103,7 @@ private extension ProfileViewController {
 	}
 	
 	func configureProfilePicture() {
-		let image = UIImage(named: "ProfilePic") ?? UIImage()
+		let image = UIImage(named: "avatar_placeholder") ?? UIImage()
 		profilePicture = ProfilePicture(image: image)
 	}
 	

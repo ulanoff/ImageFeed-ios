@@ -2,10 +2,11 @@
 //  OAuth2TokenStorage.swift
 //  ImageFeed
 //
-//  Created by Andrey Ulanov on 16.08.2023.
+//  Created by Andrey Ulanov on 17.09.2023.
 //
 
 import Foundation
+import SwiftKeychainWrapper
 
 final class OAuth2TokenStorage {
 	static let shared = OAuth2TokenStorage()
@@ -14,10 +15,11 @@ final class OAuth2TokenStorage {
 	
 	var token: String? {
 		get {
-			UserDefaults.standard.string(forKey: bearerTokenKey)
+			KeychainWrapper.standard.string(forKey: bearerTokenKey)
 		}
 		set {
-			UserDefaults.standard.setValue(newValue, forKey: bearerTokenKey)
+			guard let newValue else { return }
+			KeychainWrapper.standard.set(newValue, forKey: bearerTokenKey)
 		}
 	}
 }

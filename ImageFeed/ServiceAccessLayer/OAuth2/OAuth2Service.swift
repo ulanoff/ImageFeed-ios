@@ -7,14 +7,23 @@
 
 import Foundation
 
-enum NetworkError: Error {
-	case httpStatusCode(Int)
-	case urlRequestError(Error)
-	case urlSessionError
+struct OAuthTokenResponseBody: Decodable {
+	let accessToken: String
+	let tokenType: String
+	let scope: String
+	let createdAt: Int
 }
 
 final class OAuth2Service {
-	func fetchAuthToken(code: String, completion: @escaping (Result<Data, Error>) -> Void) {
+	private let urlSession = URLSession.shared
+	private var task: URLSessionTask?
+	private var lastCode: String?
+	
+	func fetchAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+		assert(Thread.isMainThread)
+		if lastCode == code { return }
+		task?.cancel()
+		lastCode = code
 		var request = URLRequest(url: UnsplashApiConstants.UnsplashTokenRequestURL)
 		
 		var body = URLComponents(url: UnsplashApiConstants.UnsplashTokenRequestURL, resolvingAgainstBaseURL: false)!
@@ -30,31 +39,19 @@ final class OAuth2Service {
 		request.httpMethod = "POST"
 		request.httpBody = bodyData
 		
-		let task = URLSession.shared.dataTask(with: request) { data, response, error in
-			if let data,
-			   let response,
-			   let statusCode = (response as? HTTPURLResponse)?.statusCode
-			{
-				if 200..<300 ~= statusCode {
-					DispatchQueue.main.async {
-						completion(.success(data))
-					}
-				} else {
-					DispatchQueue.main.async {
-						completion(.failure(NetworkError.httpStatusCode(statusCode)))
-					}
-				}
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+			guard let self else { return }
+			switch result {
+			case .success(let tokenData):
+				let token = tokenData.accessToken
+				completion(.success(token))
+			case .failure(let error):
+				completion(.failure(error))
+				self.lastCode = nil
 			}
-			else if let error {
-				DispatchQueue.main.async {
-					completion(.failure(NetworkError.urlRequestError(error)))
-				}
-			} else {
-				DispatchQueue.main.async {
-					completion(.failure(NetworkError.urlSessionError))
-				}
-			}
+			self.task = nil
 		}
+		self.task = task
 		task.resume()
 	}
 }
