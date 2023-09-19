@@ -8,12 +8,18 @@
 import UIKit
 import Kingfisher
 
+protocol ImagesListCellDelegate: AnyObject {
+	func imagesListCellDidTapLike(_ cell: ImagesListCell)
+}
+
 class ImagesListCell: UITableViewCell {
+	static let reuseIdentifier = "ImagesListCell"
+	weak var delegate: ImagesListCellDelegate?
+	
 	private var cellImageView = UIImageView()
 	private var likeButton = UIButton()
 	private var dateLabel = UILabel()
 	
-	static let reuseIdentifier = "ImagesListCell"
 	
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -49,6 +55,14 @@ class ImagesListCell: UITableViewCell {
 		likeButton.tintColor = photo.isLiked ? .ypRed : .ypWhiteSemitransperent
 		dateLabel.text = ImageDateFormatter.shared.string(from: photo.createdAt ?? Date())
 	}
+	
+	func setIsLiked(isLiked: Bool) {
+		likeButton.tintColor = isLiked ? .ypRed : .ypWhiteSemitransperent
+	}
+	
+	@objc func didTapLikeButton(_ sender: UIButton?) {
+		delegate?.imagesListCellDidTapLike(self)
+	}
 }
 
 private extension ImagesListCell {
@@ -79,6 +93,7 @@ private extension ImagesListCell {
 	
 	func configureLikeButton() {
 		likeButton.setImage(UIImage(named: "Heart"), for: .normal)
+		likeButton.addTarget(self, action: #selector(didTapLikeButton(_:)), for: .touchUpInside)
 	}
 	
 	func configureDateLabel() {

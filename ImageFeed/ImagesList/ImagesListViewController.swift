@@ -88,6 +88,45 @@ private extension ImagesListViewController {
 	}
 }
 
+extension ImagesListViewController {
+	func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+		cell.delegate = self
+		let photo = photos[indexPath.row]
+		cell.configureCell(with: photo) { [weak self] result in
+			guard let self else { return }
+			switch result {
+			case .success(_):
+				self.tableView.reloadRows(at: [indexPath], with: .automatic)
+			case .failure(_):
+				return
+			}
+		}
+	}
+}
+
+extension ImagesListViewController: ImagesListCellDelegate {
+	func imagesListCellDidTapLike(_ cell: ImagesListCell) {
+		guard let index = tableView.indexPath(for: cell)?.row
+		else { return }
+		UIBlockingProgressHUD.show()
+		let photo = photos[index]
+		imagesListService.changeLike(photoId: photo.id,
+									 isLike: !photo.isLiked) { result in
+			switch result {
+			case .success(_):
+				cell.setIsLiked(isLiked: !photo.isLiked)
+			case .failure(_):
+				let alertModel = AlertModel(title: "Что-то пошло не так(",
+											message: "Не удалось оценить запись пользователя",
+											buttonText: "Ок",
+											completion: nil)
+				AlertPresenter.shared.presentAlert(in: self, with: alertModel)
+			}
+			UIBlockingProgressHUD.dismiss()
+		}
+	}
+}
+
 extension ImagesListViewController: UITableViewDataSource {
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return photos.count
@@ -104,21 +143,6 @@ extension ImagesListViewController: UITableViewDataSource {
 		configCell(for: imageListCell, with: indexPath)
 
 		return imageListCell
-	}
-}
-
-extension ImagesListViewController {
-	func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-		let photo = photos[indexPath.row]
-		cell.configureCell(with: photo) { [weak self] result in
-			guard let self else { return }
-			switch result {
-			case .success(_):
-				self.tableView.reloadRows(at: [indexPath], with: .automatic)
-			case .failure(_):
-				return
-			}
-		}
 	}
 }
 
