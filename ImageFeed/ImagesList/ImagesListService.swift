@@ -57,17 +57,18 @@ final class ImagesListService {
 	private var lastLoadedPage: Int?
 	
 	func fetchPhotosNextPage() {
-		guard let url = URL(string: "\(UnsplashApiConstants.DefaultBaseURL.description)/photos"),
+		if task != nil { return }
+		let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage! + 1
+		
+		guard let url = URL(string: "\(UnsplashApiConstants.DefaultBaseURL.description)/photos?page=\(nextPage)"),
 			  let accessToken = OAuth2TokenStorage.shared.token
 		else {
 			assertionFailure("Failed to create URL or get token from storage")
 			return
 		}
 		
-		let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage! + 1
 		var request = URLRequest(url: url)
 		request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-		request.addValue(nextPage.description, forHTTPHeaderField: "page")
 		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<[PhotoResult], Error>) in
 			guard let self else { return }
 			switch result {
