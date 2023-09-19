@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ImagesListCell: UITableViewCell {
 	private var cellImageView = UIImageView()
@@ -19,15 +20,34 @@ class ImagesListCell: UITableViewCell {
 		setupUI()
 	}
 	
+	override func prepareForReuse() {
+		cellImageView.kf.cancelDownloadTask()
+	}
+	
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
-	func configureCell(with image: UIImage, isLiked: Bool, date: Date) {
+	func configureCell(with photo: Photo, fetchCompletion: ((Result<RetrieveImageResult, Error>) -> Void)?) {
 		selectionStyle = .none
-		cellImageView.image = image
-		likeButton.tintColor = isLiked ? .ypRed : .ypWhiteSemitransperent
-		dateLabel.text = ImageDateFormatter.shared.string(from: Date())
+		
+		guard let thumbURL = URL(string: photo.thumbImageURL),
+			  let _ = URL(string: photo.largeImageURL)
+		else {
+			assertionFailure("Failed to create URLs for cell")
+			return
+		}
+		cellImageView.kf.indicatorType = .activity
+		cellImageView.kf.setImage(with: thumbURL, placeholder: UIImage(named: "photo_placeholder")) { result in
+			switch result {
+			case .success(let value):
+				fetchCompletion?(.success(value))
+			case .failure(let error):
+				fetchCompletion?(.failure(error))
+			}
+		}
+		likeButton.tintColor = photo.isLiked ? .ypRed : .ypWhiteSemitransperent
+		dateLabel.text = ImageDateFormatter.shared.string(from: photo.createdAt ?? Date())
 	}
 }
 
