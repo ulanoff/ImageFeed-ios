@@ -7,6 +7,7 @@
 
 import UIKit
 import Kingfisher
+import WebKit
 
 final class ProfileViewController: UIViewController {
 	private var nameLabel: UILabel!
@@ -31,7 +32,11 @@ final class ProfileViewController: UIViewController {
 	override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 	
 	@objc private func didTapLogoutButton(_ button: UIButton) {
-		print("Logout")
+		guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+		OAuth2TokenStorage.shared.deleteToken()
+		clearCookies()
+		let authViewController = AuthViewController()
+		window.rootViewController = authViewController
 	}
 }
 private extension ProfileViewController {
@@ -59,6 +64,15 @@ private extension ProfileViewController {
 		else { return }
 		profilePicture.kf.setImage(with: url,
 								   placeholder: UIImage(named: "avatar_placeholder"))
+	}
+	
+	func clearCookies() {
+		HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+		WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+			records.forEach { record in
+				WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+			}
+		}
 	}
 	
 	func setupUI() {
