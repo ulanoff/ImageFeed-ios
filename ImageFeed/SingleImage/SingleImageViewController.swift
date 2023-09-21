@@ -6,25 +6,33 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
-	var image: UIImage! {
-		didSet {
-			guard isViewLoaded else { return }
-			imageView.image = image
-			rescaleAndCenterImageInScrollView(image: image)
-		}
-	}
+	private var imageURL: URL
 	
 	private var scrollView = UIScrollView()
 	private var imageView = UIImageView()
 	private var backButton = UIButton()
 	private var shareButton = UIButton()
 	
+	init(imageURL: URL) {
+		self.imageURL = imageURL
+		super.init(nibName: nil, bundle: nil)
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 		setupUI()
     }
+	
+	override func viewDidDisappear(_ animated: Bool) {
+		KingfisherManager.shared.cache.clearMemoryCache()
+	}
 	
 	override func viewDidLayoutSubviews() {
 		centerImage()
@@ -37,7 +45,7 @@ final class SingleImageViewController: UIViewController {
 	}
 	
 	@objc private func didTapShareButton(_ sender: UIButton) {
-		guard let image else { return }
+		guard let image = imageView.image else { return }
 		let activity = UIActivityViewController(activityItems: [image], applicationActivities: nil)
 		present(activity, animated: true)
 	}
@@ -46,11 +54,11 @@ final class SingleImageViewController: UIViewController {
 private extension SingleImageViewController {
 	func setupUI() {
 		configureScrollView()
-		configureImageView()
 		configureBackButton()
 		configureShareButton()
 		configureMainView()
 		configureConstraints()
+		configureImageView()
 	}
 	
 	func configureMainView() {
@@ -61,15 +69,24 @@ private extension SingleImageViewController {
 	}
 	
 	func configureImageView() {
-		imageView.image = image
-		rescaleAndCenterImageInScrollView(image: image)
+		UIBlockingProgressHUD.show()
+		imageView.kf.setImage(with: imageURL) { [weak self] result in
+			UIBlockingProgressHUD.dismiss()
+			guard let self else { return }
+			switch result {
+			case .success(let imageResult):
+				self.rescaleAndCenterImageInScrollView(image: imageResult.image)
+			case .failure(_):
+				self.showError()
+			}
+		}
 	}
 	
 	func configureScrollView() {
 		scrollView.addSubview(imageView)
 		scrollView.delegate = self
-		scrollView.minimumZoomScale = 0.75
-		scrollView.maximumZoomScale = 1.5
+		scrollView.minimumZoomScale = 0.1
+		scrollView.maximumZoomScale = 1.25
 	}
 	
 	func configureBackButton() {
@@ -126,7 +143,10 @@ private extension SingleImageViewController {
 		let scale = min(maxZoomScale, max(minZoomScale, max(hScale, vScale)))
 		scrollView.setZoomScale(scale, animated: false)
 		scrollView.layoutIfNeeded()
-		centerImage()
+		let newContentSize = scrollView.contentSize
+		let x = (newContentSize.width - visibleRectSize.width) / 2
+		let y = (newContentSize.height - visibleRectSize.height) / 2
+		scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
 	}
 	
 	func centerImage() {
@@ -141,6 +161,21 @@ private extension SingleImageViewController {
 			yOffset = (visibleRectSize.height - contentSize.height) * 0.5
 		}
 		scrollView.contentInset = UIEdgeInsets(top: yOffset, left: xOffset, bottom: 0, right: 0)
+	}
+	
+	func showError() {
+		let alert = UIAlertController(title: "Что-то пошло не так(", message: "Попробовать еще раз?", preferredStyle: .alert)
+		let noAction = UIAlertAction(title: "Не надо", style: .cancel) { [weak self] _ in
+			guard let self else { return }
+			dismiss(animated: true)
+		}
+		let yesAction = UIAlertAction(title: "Повторить", style: .default) { [ weak self ] _ in
+			guard let self else { return }
+			configureImageView()
+		}
+		alert.addAction(yesAction)
+		alert.addAction(noAction)
+		present(alert, animated: true)
 	}
 }
 

@@ -10,7 +10,6 @@ import Kingfisher
 
 class ImagesListViewController: UIViewController {
 	private let imagesListService = ImagesListService()
-	private let imagesNames: [String] = Array(0..<20).map{ "\($0)" }
 	private var imageListServiceObserver: NSObjectProtocol?
 	private var photos: [Photo] = []
 	
@@ -147,7 +146,6 @@ extension ImagesListViewController: UITableViewDataSource {
 }
 
 extension ImagesListViewController: UITableViewDelegate {
-	
 	func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
 		if indexPath.row == photos.count - 1 {
 			imagesListService.fetchPhotosNextPage()
@@ -155,8 +153,9 @@ extension ImagesListViewController: UITableViewDelegate {
 	}
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		let vc = SingleImageViewController()
-		vc.image = UIImage(named: imagesNames[indexPath.row])
+		let photo = photos[indexPath.row]
+		guard let url = URL(string: photo.largeImageURL) else { return }
+		let vc = SingleImageViewController(imageURL: url)
 		vc.modalPresentationStyle = .overCurrentContext
 		present(vc, animated: true)
 	}
