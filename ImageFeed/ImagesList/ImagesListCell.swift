@@ -53,7 +53,11 @@ class ImagesListCell: UITableViewCell {
 			}
 		}
 		likeButton.tintColor = photo.isLiked ? .ypRed : .ypWhiteSemitransperent
-		dateLabel.text = ImageDateFormatter.shared.string(from: photo.createdAt ?? Date())
+		if let date = photo.createdAt {
+			dateLabel.text = ImageDateFormatter.shared.string(from: date)
+		} else {
+			dateLabel.text = ""
+		}
 	}
 	
 	func setIsLiked(isLiked: Bool) {
