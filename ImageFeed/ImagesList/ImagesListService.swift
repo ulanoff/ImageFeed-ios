@@ -64,13 +64,13 @@ struct Photo {
 	}
 	
 	func changedLikeState() -> Photo {
-		return Photo(id: self.id,
-					 size: self.size,
-					 createdAt: self.createdAt,
-					 welcomeDescription: self.welcomeDescription,
-					 thumbImageURL: self.thumbImageURL,
-					 largeImageURL: self.largeImageURL,
-					 isLiked: !self.isLiked)
+		return Photo(id: id,
+					 size: size,
+					 createdAt: createdAt,
+					 welcomeDescription: welcomeDescription,
+					 thumbImageURL: thumbImageURL,
+					 largeImageURL: largeImageURL,
+					 isLiked: !isLiked)
 	}
 }
 
@@ -86,11 +86,11 @@ final class ImagesListService {
 					  object: self)
 		}
 	}
-	private var lastLoadedPage: Int?
+	private var lastLoadedPage: Int = 0
 	
 	func fetchPhotosNextPage() {
 		if task != nil { return }
-		let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage! + 1
+		let nextPage = lastLoadedPage + 1
 		
 		guard let url = URL(string: "\(UnsplashApiConstants.DefaultBaseURL.description)/photos?page=\(nextPage)"),
 			  let accessToken = OAuth2TokenStorage.shared.token
