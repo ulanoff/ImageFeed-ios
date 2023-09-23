@@ -139,7 +139,8 @@ final class ImagesListService {
 		var request = URLRequest(url: url)
 		request.httpMethod = isLike ? "POST" : "DELETE"
 		request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-		let task = urlSession.objectTask(for: request) { (result: Result<LikedPhotoResult, Error>) in
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<LikedPhotoResult, Error>) in
+			guard let self else { return }
 			switch result {
 			case .success(_):
 				if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
