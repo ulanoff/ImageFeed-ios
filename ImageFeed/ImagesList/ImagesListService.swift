@@ -113,7 +113,12 @@ final class ImagesListService {
 				self.photos += photos
 				self.lastLoadedPage = nextPage
 			case .failure(let error):
-				assertionFailure(error.localizedDescription)
+				switch error {
+				case .httpStatusCode(let statusCode) where statusCode == 500:
+					return
+				default:
+					assertionFailure(error.localizedDescription)
+				}
 			}
 			self.task = nil
 		}
