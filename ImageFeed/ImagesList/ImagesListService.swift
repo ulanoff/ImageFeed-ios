@@ -101,7 +101,7 @@ final class ImagesListService {
 		
 		var request = URLRequest(url: url)
 		request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<[PhotoResult], Error>) in
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<[PhotoResult], NetworkError>) in
 			guard let self else { return }
 			switch result {
 			case .success(let photosData):
@@ -139,7 +139,7 @@ final class ImagesListService {
 		var request = URLRequest(url: url)
 		request.httpMethod = isLike ? "POST" : "DELETE"
 		request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<LikedPhotoResult, Error>) in
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<LikedPhotoResult, NetworkError>) in
 			guard let self else { return }
 			switch result {
 			case .success(_):

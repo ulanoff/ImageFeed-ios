@@ -39,7 +39,7 @@ final class OAuth2Service {
 		request.httpMethod = "POST"
 		request.httpBody = bodyData
 		
-		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, NetworkError>) in
 			guard let self else { return }
 			switch result {
 			case .success(let tokenData):

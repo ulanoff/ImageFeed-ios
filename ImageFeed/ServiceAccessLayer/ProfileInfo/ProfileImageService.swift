@@ -45,7 +45,7 @@ final class ProfileImageService {
 		var request = URLRequest(url: url)
 		request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 		
-		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, NetworkError>) in
 			guard let self else { return }
 			switch result {
 			case .success(let userResult):

@@ -54,7 +54,7 @@ final class ProfileService {
 		
 		var request = URLRequest(url: url)
 		request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, NetworkError>) in
 			guard let self else { return }
 			switch result {
 			case .success(let profileData):
