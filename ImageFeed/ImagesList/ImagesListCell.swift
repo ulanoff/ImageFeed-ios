@@ -6,28 +6,66 @@
 //
 
 import UIKit
+import Kingfisher
+
+protocol ImagesListCellDelegate: AnyObject {
+	func imagesListCellDidTapLike(_ cell: ImagesListCell)
+}
 
 class ImagesListCell: UITableViewCell {
+	static let reuseIdentifier = "ImagesListCell"
+	weak var delegate: ImagesListCellDelegate?
+	
 	private var cellImageView = UIImageView()
 	private var likeButton = UIButton()
 	private var dateLabel = UILabel()
 	
-	static let reuseIdentifier = "ImagesListCell"
 	
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		setupUI()
 	}
 	
+	override func prepareForReuse() {
+		cellImageView.kf.cancelDownloadTask()
+	}
+	
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
-	func configureCell(with image: UIImage, isLiked: Bool, date: Date) {
+	func configureCell(with photo: Photo, fetchCompletion: ((Result<RetrieveImageResult, Error>) -> Void)?) {
 		selectionStyle = .none
-		cellImageView.image = image
+		
+		guard let thumbURL = URL(string: photo.thumbImageURL),
+			  let _ = URL(string: photo.largeImageURL)
+		else {
+			assertionFailure("Failed to create URLs for cell")
+			return
+		}
+		cellImageView.kf.indicatorType = .activity
+		cellImageView.kf.setImage(with: thumbURL, placeholder: UIImage(named: "photo_placeholder")) { result in
+			switch result {
+			case .success(let value):
+				fetchCompletion?(.success(value))
+			case .failure(let error):
+				fetchCompletion?(.failure(error))
+			}
+		}
+		likeButton.tintColor = photo.isLiked ? .ypRed : .ypWhiteSemitransperent
+		if let date = photo.createdAt {
+			dateLabel.text = ImageDateFormatter.shared.string(from: date)
+		} else {
+			dateLabel.text = ""
+		}
+	}
+	
+	func setIsLiked(isLiked: Bool) {
 		likeButton.tintColor = isLiked ? .ypRed : .ypWhiteSemitransperent
-		dateLabel.text = ImageDateFormatter.shared.string(from: Date())
+	}
+	
+	@objc func didTapLikeButton(_ sender: UIButton?) {
+		delegate?.imagesListCellDidTapLike(self)
 	}
 }
 
@@ -59,6 +97,7 @@ private extension ImagesListCell {
 	
 	func configureLikeButton() {
 		likeButton.setImage(UIImage(named: "Heart"), for: .normal)
+		likeButton.addTarget(self, action: #selector(didTapLikeButton(_:)), for: .touchUpInside)
 	}
 	
 	func configureDateLabel() {

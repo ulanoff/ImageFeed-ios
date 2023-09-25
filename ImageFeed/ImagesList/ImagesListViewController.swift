@@ -6,21 +6,56 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ImagesListViewController: UIViewController {
-	private let imagesNames: [String] = Array(0..<20).map{ "\($0)" }
+	private let imagesListService = ImagesListService()
+	private var imageListServiceObserver: NSObjectProtocol?
+	private var photos: [Photo] = []
 	
 	private var tableView: UITableView!
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setupUI()
+		setupImageListServiceObserver()
+	}
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		imagesListService.fetchPhotosNextPage()
 	}
 	
 	override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 }
 
 private extension ImagesListViewController {
+	func setupImageListServiceObserver() {
+		imageListServiceObserver = NotificationCenter.default
+			.addObserver(
+				forName: ImagesListService.didChangeNotification,
+				object: nil,
+				queue: .main
+			) { [weak self] _ in
+				guard let self else { return }
+				self.updateTableViewAnimated()
+			}
+	}
+	
+	func updateTableViewAnimated() {
+		let oldCount = photos.count
+		let newCount = imagesListService.photos.count
+		photos = imagesListService.photos
+		if oldCount != newCount {
+			tableView.performBatchUpdates {
+				let indexPaths = (oldCount..<newCount).map {
+					return IndexPath(row: $0, section: 0)
+				}
+				tableView.insertRows(at: indexPaths, with: .automatic)
+			}
+		}
+	}
+	
 	func setupUI() {
 		configureTableView()
 		configureMainView()
@@ -52,9 +87,48 @@ private extension ImagesListViewController {
 	}
 }
 
+extension ImagesListViewController {
+	func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+		cell.delegate = self
+		let photo = photos[indexPath.row]
+		cell.configureCell(with: photo) { [weak self] result in
+			guard let self else { return }
+			switch result {
+			case .success(_):
+				self.tableView.reloadRows(at: [indexPath], with: .automatic)
+			case .failure(_):
+				return
+			}
+		}
+	}
+}
+
+extension ImagesListViewController: ImagesListCellDelegate {
+	func imagesListCellDidTapLike(_ cell: ImagesListCell) {
+		guard let index = tableView.indexPath(for: cell)?.row
+		else { return }
+		UIBlockingProgressHUD.show()
+		let photo = photos[index]
+		imagesListService.changeLike(photoId: photo.id,
+									 isLike: !photo.isLiked) { result in
+			switch result {
+			case .success(_):
+				cell.setIsLiked(isLiked: !photo.isLiked)
+			case .failure(_):
+				let alertModel = AlertModel(title: "Что-то пошло не так(",
+											message: "Не удалось оценить запись пользователя",
+											buttonText: "Ок",
+											completion: nil)
+				AlertPresenter.shared.presentAlert(in: self, with: alertModel)
+			}
+			UIBlockingProgressHUD.dismiss()
+		}
+	}
+}
+
 extension ImagesListViewController: UITableViewDataSource {
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return imagesNames.count
+		return photos.count
 	}
 
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -71,32 +145,17 @@ extension ImagesListViewController: UITableViewDataSource {
 	}
 }
 
-extension ImagesListViewController {
-	func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-		guard let image = UIImage(named: imagesNames[indexPath.row]) else { return }
-		let isEvenCell = (indexPath.row + 1) % 2 == 0
-		cell.configureCell(with: image,
-						   isLiked: isEvenCell,
-						   date: Date())
-	}
-}
-
 extension ImagesListViewController: UITableViewDelegate {
-	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		guard let image = UIImage(named: imagesNames[indexPath.row]) else {
-			return 0
+	func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+		if indexPath.row == photos.count - 1 {
+			imagesListService.fetchPhotosNextPage()
 		}
-		let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
-		let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
-		let imageWidth = image.size.width
-		let scale = imageViewWidth / imageWidth
-		let cellHeight = image.size.height * scale + imageInsets.top + imageInsets.bottom
-		return cellHeight
 	}
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		let vc = SingleImageViewController()
-		vc.image = UIImage(named: imagesNames[indexPath.row])
+		let photo = photos[indexPath.row]
+		guard let url = URL(string: photo.largeImageURL) else { return }
+		let vc = SingleImageViewController(imageURL: url)
 		vc.modalPresentationStyle = .overCurrentContext
 		present(vc, animated: true)
 	}

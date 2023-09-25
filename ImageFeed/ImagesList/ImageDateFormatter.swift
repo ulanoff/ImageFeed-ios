@@ -12,8 +12,8 @@ class ImageDateFormatter: DateFormatter {
 	
 	override init() {
 		super.init()
-		dateStyle = .long
-		timeStyle = .none
+		dateFormat = "dd MMMM yyyy"
+		locale = Locale(identifier: "ru_RU")
 	}
 	
 	required init?(coder: NSCoder) {
