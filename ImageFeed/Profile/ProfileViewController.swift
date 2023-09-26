@@ -79,8 +79,8 @@ private extension ProfileViewController {
 		guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
 		OAuth2TokenStorage.shared.deleteToken()
 		clearCookies()
-		let authViewController = AuthViewController()
-		window.rootViewController = authViewController
+		let splashViewController = SplashViewController()
+		window.rootViewController = splashViewController
 	}
 	
 	func clearCookies() {

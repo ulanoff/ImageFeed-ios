@@ -13,8 +13,16 @@ protocol WebViewViewControllerDelegate: AnyObject {
 	func webViewViewControllerDidCancel(_ vc: WebViewViewController)
 }
 
-final class WebViewViewController: UIViewController {
+protocol WebViewViewControllerProtocol: AnyObject {
+	var presenter: WebViewPresenterProtocol? { get set }
+	func load(request: URLRequest)
+	func setProgressValue(_ newValue: Float)
+	func setProgressHidden(_ isHiddent: Bool)
+}
+
+final class WebViewViewController: UIViewController, WebViewViewControllerProtocol {
 	weak var delegate: WebViewViewControllerDelegate?
+	var presenter: WebViewPresenterProtocol?
 	private var estimatedProgressObservation: NSKeyValueObservation?
 	
 	private var webView: WKWebView!
@@ -24,28 +32,26 @@ final class WebViewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		setupUI()
-		
 		webView.navigationDelegate = self
-		
-		var urlComponents = URLComponents(url: UnsplashApiConstants.UnsplashAuthorizeURL, resolvingAgainstBaseURL: true)!
-		urlComponents.queryItems = [
-			URLQueryItem(name: "client_id", value: UnsplashApiConstants.AccessKey),
-			URLQueryItem(name: "redirect_uri", value: UnsplashApiConstants.RedirectURI),
-			URLQueryItem(name: "response_type", value: UnsplashApiConstants.ResponseType),
-			URLQueryItem(name: "scope", value: UnsplashApiConstants.AccessScope),
-		]
-		let url = urlComponents.url!
-		
-		let request = URLRequest(url: url)
-		webView.load(request)
+		presenter?.viewDidLoad()
 		
 		estimatedProgressObservation = webView.observe(\.estimatedProgress) { [weak self] _, _ in
 			guard let self else { return }
-			updateProgress()
+			presenter?.didUpdateProgressValue(webView.estimatedProgress)
 		}
-	
-		updateProgress()
     }
+	
+	func load(request: URLRequest) {
+		webView.load(request)
+	}
+	
+	func setProgressValue(_ newValue: Float) {
+		progressBar.progress = newValue
+	}
+	
+	func setProgressHidden(_ isHiddent: Bool) {
+		progressBar.isHidden = isHiddent
+	}
 	
 	private func updateProgress() {
 		progressBar.progress = Float(webView.estimatedProgress)
@@ -53,17 +59,10 @@ final class WebViewViewController: UIViewController {
 	}
 	
 	private func code(from navigationAction: WKNavigationAction) -> String? {
-		if
-			let url = navigationAction.request.url,
-			let urlComponents = URLComponents(string: url.absoluteString),
-			urlComponents.path == "/oauth/authorize/native",
-			let items = urlComponents.queryItems,
-			let codeItem = items.first(where: { $0.name == UnsplashApiConstants.ResponseType })
-		{
-			return codeItem.value
-		} else {
-			return nil
-		}
+		guard let url = navigationAction.request.url
+		else { return nil }
+		let code = presenter?.code(from: url)
+		return code
 	}
 	
 	@objc private func didTapBackButton(_ sender: UIButton?) {

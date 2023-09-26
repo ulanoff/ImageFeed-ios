@@ -15,22 +15,28 @@ struct OAuthTokenResponseBody: Decodable {
 }
 
 final class OAuth2Service {
+	private let authConfiguration = AuthConfiguration.standart
 	private let urlSession = URLSession.shared
 	private var task: URLSessionTask?
 	private var lastCode: String?
 	
 	func fetchAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+		guard let url = URL(string: authConfiguration.tokenRequestURLString)
+		else {
+			assertionFailure("Failed to create URL")
+			return
+		}
 		assert(Thread.isMainThread)
 		if lastCode == code { return }
 		task?.cancel()
 		lastCode = code
-		var request = URLRequest(url: UnsplashApiConstants.UnsplashTokenRequestURL)
+		var request = URLRequest(url: url)
 		
-		var body = URLComponents(url: UnsplashApiConstants.UnsplashTokenRequestURL, resolvingAgainstBaseURL: false)!
+		var body = URLComponents(url: url, resolvingAgainstBaseURL: false)!
 		body.queryItems = [
-			URLQueryItem(name: "client_id", value: UnsplashApiConstants.AccessKey),
-			URLQueryItem(name: "client_secret", value: UnsplashApiConstants.SecretKey),
-			URLQueryItem(name: "redirect_uri", value: UnsplashApiConstants.RedirectURI),
+			URLQueryItem(name: "client_id", value: authConfiguration.accessKey),
+			URLQueryItem(name: "client_secret", value: authConfiguration.secretKey),
+			URLQueryItem(name: "redirect_uri", value: authConfiguration.redirectURI),
 			URLQueryItem(name: "code", value: code),
 			URLQueryItem(name: "grant_type", value: "authorization_code")
 		]

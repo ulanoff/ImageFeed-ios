@@ -78,6 +78,7 @@ final class ImagesListService {
 	static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
 	
 	private let urlSession = URLSession.shared
+	private let authConfiguration = AuthConfiguration.standart
 	private var task: URLSessionTask?
 	private(set) var photos: [Photo] = [] {
 		didSet {
@@ -92,7 +93,7 @@ final class ImagesListService {
 		if task != nil { return }
 		let nextPage = lastLoadedPage + 1
 		
-		guard let url = URL(string: "\(UnsplashApiConstants.DefaultBaseURL.description)/photos?page=\(nextPage)"),
+		guard let url = URL(string: "\(authConfiguration.defaultBaseURL.description)/photos?page=\(nextPage)"),
 			  let accessToken = OAuth2TokenStorage.shared.token
 		else {
 			assertionFailure("Failed to create URL or get token from storage")
@@ -134,7 +135,7 @@ final class ImagesListService {
 		if task != nil { return }
 		
 		guard
-			let url = URL(string: "\(UnsplashApiConstants.DefaultBaseURL)/photos/\(photoId)/like"),
+			let url = URL(string: "\(authConfiguration.defaultBaseURL)/photos/\(photoId)/like"),
 			let accessToken = OAuth2TokenStorage.shared.token
 		else {
 			assertionFailure("Failed to create URL or get token from storage")
