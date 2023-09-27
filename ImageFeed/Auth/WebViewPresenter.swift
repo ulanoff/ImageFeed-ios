@@ -41,7 +41,7 @@ final class WebViewPresenter: WebViewPresenterProtocol {
 		authHelper.code(from: url)
 	}
 	
-	private func shouldHideProgressBar(for value: Float) -> Bool {
+	func shouldHideProgressBar(for value: Float) -> Bool {
 		return abs(value - 1.0) <= 0.001
 	}
 }
