@@ -11,6 +11,8 @@
 		5515098C2A8D36170052EBAE /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5515098B2A8D36170052EBAE /* SplashViewController.swift */; };
 		551AF4472AADCF09002F2908 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 551AF4462AADCF09002F2908 /* ProgressHUD */; };
 		551AF44A2AAE4BF8002F2908 /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551AF4492AAE4BF8002F2908 /* UIBlockingProgressHUD.swift */; };
+		551DDB9E2AC46FBB007A48A4 /* ProfilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551DDB9D2AC46FBB007A48A4 /* ProfilePresenter.swift */; };
+		551DDBA02AC47C8E007A48A4 /* ProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551DDB9F2AC47C8E007A48A4 /* ProfileTests.swift */; };
 		553885F12AB34B10008CD2A7 /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 553885F02AB34B10008CD2A7 /* SwiftKeychainWrapper */; };
 		553885F32AB354B5008CD2A7 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553885F22AB354B5008CD2A7 /* TabBarController.swift */; };
 		555A26C32AB1F5C700E12C1C /* URLSession+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555A26C22AB1F5C700E12C1C /* URLSession+Ext.swift */; };
@@ -56,6 +58,8 @@
 		550AE3462A59898A00804A82 /* ImageDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDateFormatter.swift; sourceTree = "<group>"; };
 		5515098B2A8D36170052EBAE /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		551AF4492AAE4BF8002F2908 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
+		551DDB9D2AC46FBB007A48A4 /* ProfilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePresenter.swift; sourceTree = "<group>"; };
+		551DDB9F2AC47C8E007A48A4 /* ProfileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTests.swift; sourceTree = "<group>"; };
 		553885F22AB354B5008CD2A7 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		555A26C22AB1F5C700E12C1C /* URLSession+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+Ext.swift"; sourceTree = "<group>"; };
 		555A26C42AB1F8DE00E12C1C /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -186,6 +190,7 @@
 			children = (
 				55A6B2FE2A606AEA00AC776C /* ProfileViewController.swift */,
 				55A6B3012A606FD000AC776C /* ProfilePicture.swift */,
+				551DDB9D2AC46FBB007A48A4 /* ProfilePresenter.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -245,8 +250,8 @@
 			children = (
 				55C27FBA2A4EF50D00705795 /* ImagesListViewController.swift */,
 				55C8C7B42A5841B00014A081 /* ImagesListCell.swift */,
-				550AE3462A59898A00804A82 /* ImageDateFormatter.swift */,
 				55706E1F2AB87D28007931BC /* ImagesListService.swift */,
+				550AE3462A59898A00804A82 /* ImageDateFormatter.swift */,
 			);
 			path = ImagesList;
 			sourceTree = "<group>";
@@ -255,6 +260,7 @@
 			isa = PBXGroup;
 			children = (
 				55E18D252AC341D0003ADBF5 /* WebViewTests.swift */,
+				551DDB9F2AC47C8E007A48A4 /* ProfileTests.swift */,
 			);
 			path = ImageFeedTests;
 			sourceTree = "<group>";
@@ -402,6 +408,7 @@
 				55C070802AB0994C008E7453 /* ProfileImageService.swift in Sources */,
 				55E18D1A2AC30FE4003ADBF5 /* WebViewPresenter.swift in Sources */,
 				553885F32AB354B5008CD2A7 /* TabBarController.swift in Sources */,
+				551DDB9E2AC46FBB007A48A4 /* ProfilePresenter.swift in Sources */,
 				55706E2F2AB9C487007931BC /* Array+Ext.swift in Sources */,
 				5515098C2A8D36170052EBAE /* SplashViewController.swift in Sources */,
 				551AF44A2AAE4BF8002F2908 /* UIBlockingProgressHUD.swift in Sources */,
@@ -413,6 +420,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				55E18D262AC341D0003ADBF5 /* WebViewTests.swift in Sources */,
+				551DDBA02AC47C8E007A48A4 /* ProfileTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

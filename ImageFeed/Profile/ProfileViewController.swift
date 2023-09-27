@@ -7,37 +7,53 @@
 
 import UIKit
 import Kingfisher
-import WebKit
 
-final class ProfileViewController: UIViewController {
+protocol ProfileViewControllerProtocol: AnyObject {
+	var presenter: ProfilePresenterProtocol? { get set }
+	func showLogoutAlert()
+	func setProfileDetails(profile: Profile)
+	func setAvatarImage(url: URL)
+	func switchToSplashViewController()
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
+	var presenter: ProfilePresenterProtocol?
 	private var nameLabel: UILabel!
 	private var idLabel: UILabel!
 	private var descriptionLabel: UILabel!
 	private var profilePicture: ProfilePicture!
 	private var logoutButton: UIButton!
-	private var profileService = ProfileService.shared
-	
-	private var profileImageServiceObserver: NSObjectProtocol?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
 		setupUI()
-		addAvatarUpdateObserver()
-		updateAvatar()
-		if let profile = profileService.profile {
-			updateProfileDetails(profile: profile)
-		}
+		presenter?.viewDidLoad()
     }
 	
 	override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 	
 	@objc private func didTapLogoutButton(_ button: UIButton) {
+		presenter?.didTapLogoutButton()
+	}
+	
+	func setAvatarImage(url: URL) {
+		profilePicture.kf.setImage(with: url,
+								   placeholder: UIImage(named: "avatar_placeholder"))
+	}
+	
+	func setProfileDetails(profile: Profile) {
+		nameLabel.text = profile.name
+		idLabel.text = profile.loginName
+		descriptionLabel.text = profile.bio
+	}
+	
+	func showLogoutAlert() {
 		let alert = UIAlertController(title: "Пока, пока!",
 									  message: "Уверены что хотите выйти?",
 									  preferredStyle: .alert)
 		let agreeAction = UIAlertAction(title: "Да", style: .default) { [weak self] _ in
 			guard let self else { return }
-			logout()
+			presenter?.didConfirmLogout()
 		}
 		let disagreeAction = UIAlertAction(title: "Нет", style: .cancel) { [weak self] _ in
 			guard let self else { return }
@@ -47,51 +63,14 @@ final class ProfileViewController: UIViewController {
 		alert.addAction(agreeAction)
 		present(alert, animated: true)
 	}
-}
-private extension ProfileViewController {
-	func updateProfileDetails(profile: Profile) {
-		nameLabel.text = profile.name
-		idLabel.text = profile.loginName
-		descriptionLabel.text = profile.bio
-	}
 	
-	func addAvatarUpdateObserver() {
-		profileImageServiceObserver = NotificationCenter.default
-			.addObserver(forName: ProfileImageService.didChangeNotification,
-						 object: nil,
-						 queue: .main
-			) { [weak self] _ in
-				guard let self else { return }
-				self.updateAvatar()
-			}
-	}
-	
-	func updateAvatar() {
-		guard
-			let profileImageURL = ProfileImageService.shared.avatarURL,
-			let url = URL(string: profileImageURL)
-		else { return }
-		profilePicture.kf.setImage(with: url,
-								   placeholder: UIImage(named: "avatar_placeholder"))
-	}
-	
-	func logout() {
+	func switchToSplashViewController() {
 		guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
-		OAuth2TokenStorage.shared.deleteToken()
-		clearCookies()
 		let splashViewController = SplashViewController()
 		window.rootViewController = splashViewController
 	}
-	
-	func clearCookies() {
-		HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
-		WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
-			records.forEach { record in
-				WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
-			}
-		}
-	}
-	
+}
+private extension ProfileViewController {
 	func setupUI() {
 		configureNameLabel()
 		configureIdLabel()
