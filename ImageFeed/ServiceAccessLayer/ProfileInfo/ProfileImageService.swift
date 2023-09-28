@@ -25,6 +25,7 @@ final class ProfileImageService {
 		return decoder
 	}()
 	private let urlSession = URLSession.shared
+	private let authConfiguration = AuthConfiguration.standart
 	private var task: URLSessionTask?
 	private var lastUsername: String?
 	private(set) var avatarURL: String?
@@ -35,7 +36,7 @@ final class ProfileImageService {
 		task?.cancel()
 		lastUsername = username
 		
-		guard let url = URL(string: "\(UnsplashApiConstants.DefaultBaseURL)/users/\(username)"),
+		guard let url = URL(string: "\(authConfiguration.defaultBaseURL)/users/\(username)"),
 			  let accessToken = OAuth2TokenStorage.shared.token
 		else {
 			assertionFailure("Failed to create URL or get token from storage")
@@ -45,7 +46,7 @@ final class ProfileImageService {
 		var request = URLRequest(url: url)
 		request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 		
-		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, NetworkError>) in
 			guard let self else { return }
 			switch result {
 			case .success(let userResult):

@@ -37,6 +37,7 @@ final class ProfileService {
 		return decoder
 	}()
 	private let urlSession = URLSession.shared
+	private let authConfiguration = AuthConfiguration.standart
 	private var task: URLSessionTask?
 	private var lastToken: String?
 	private(set) var profile: Profile?
@@ -47,14 +48,14 @@ final class ProfileService {
 		task?.cancel()
 		lastToken = token
 		
-		guard let url = URL(string: "\(UnsplashApiConstants.DefaultBaseURL)/me") else {
+		guard let url = URL(string: "\(authConfiguration.defaultBaseURL)/me") else {
 			assertionFailure("Failed to create URL")
 			return
 		}
 		
 		var request = URLRequest(url: url)
 		request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
+		let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, NetworkError>) in
 			guard let self else { return }
 			switch result {
 			case .success(let profileData):

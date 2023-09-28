@@ -10,7 +10,7 @@ import Foundation
 extension URLSession {
 	func objectTask<T: Decodable>(
 		for request: URLRequest,
-		completion: @escaping (Result<T, Error>) -> Void
+		completion: @escaping (Result<T, NetworkError>) -> Void
 	) -> URLSessionTask {
 		let task = dataTask(with: request) { data, response, error in
 			DispatchQueue.main.async {

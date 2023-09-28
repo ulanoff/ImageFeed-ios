@@ -93,6 +93,7 @@ private extension SingleImageViewController {
 		backButton.setImage(UIImage(named: "Backward"), for: .normal)
 		backButton.tintColor = .ypWhite
 		backButton.addTarget(self, action: #selector(didTapBackButton(_:)), for: .touchUpInside)
+		backButton.accessibilityIdentifier = "back button"
 	}
 	
 	func configureShareButton() {
