@@ -25,11 +25,12 @@ final class AuthHelper: AuthHelperProtocol {
 	}
 	
 	func authURL() -> URL {
-		guard let url = URL(string: configuration.authURLString)
+		guard
+            let url = URL(string: configuration.authURLString),
+            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
 		else {
 			fatalError("Failed to create URL")
 		}
-		var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)!
 		urlComponents.queryItems = [
 			URLQueryItem(name: "client_id", value: configuration.accessKey),
 			URLQueryItem(name: "redirect_uri", value: configuration.redirectURI),
