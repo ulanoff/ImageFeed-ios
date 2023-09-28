@@ -98,6 +98,7 @@ private extension ImagesListCell {
 	func configureLikeButton() {
 		likeButton.setImage(UIImage(named: "Heart"), for: .normal)
 		likeButton.addTarget(self, action: #selector(didTapLikeButton(_:)), for: .touchUpInside)
+		likeButton.accessibilityIdentifier = "like button"
 	}
 	
 	func configureDateLabel() {

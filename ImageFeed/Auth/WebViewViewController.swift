@@ -89,6 +89,7 @@ private extension WebViewViewController {
 	func configureWebView() {
 		webView = WKWebView()
 		webView.backgroundColor = .ypWhite
+		webView.accessibilityIdentifier = "auth web view"
 	}
 	
 	func configureBackButton() {

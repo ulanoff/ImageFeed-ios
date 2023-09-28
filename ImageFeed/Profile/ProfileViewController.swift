@@ -123,6 +123,7 @@ private extension ProfileViewController {
 		logoutButton.setImage(icon, for: .normal)
 		logoutButton.tintColor = .ypRed
 		logoutButton.addTarget(self, action: #selector(didTapLogoutButton(_:)), for: .touchUpInside)
+		logoutButton.accessibilityIdentifier = "logout button"
 	}
 	
 	func configureConstraints() {

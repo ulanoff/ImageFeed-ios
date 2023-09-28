@@ -67,6 +67,7 @@ private extension AuthViewController {
 		loginButton.backgroundColor = .ypWhite
 		loginButton.layer.cornerRadius = 16
 		loginButton.addTarget(self, action: #selector(didTapLoginButton(_:)), for: .touchUpInside)
+		loginButton.accessibilityIdentifier = "auth button"
 	}
 	
 	func configureConstraints() {
