@@ -10,7 +10,7 @@ import Foundation
 protocol ImagesListPresenterProtocol {
 	var view: ImagesListViewControllerProtocol? { get set }
 	func viewDidLoad()
-	func getImages()
+    func getImagesIfNeeded(at indexPath: IndexPath)
 	func like(photo: Photo, completion: (() -> Void)?)
 }
 
@@ -21,7 +21,7 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
 	
 	func viewDidLoad() {
 		setupImageListServiceObserver()
-		getImages()
+        imagesListService.fetchPhotosNextPage()
 	}
 	
 	func setupImageListServiceObserver() {
@@ -66,7 +66,11 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
 		}
 	}
 	
-	func getImages() {
-		imagesListService.fetchPhotosNextPage()
+    func getImagesIfNeeded(at indexPath: IndexPath) {
+        guard let photosCount = view?.photos.count
+        else { return }
+        if indexPath.row == photosCount - 1 {
+            imagesListService.fetchPhotosNextPage()
+        }
 	}
 }

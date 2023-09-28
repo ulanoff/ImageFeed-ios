@@ -130,9 +130,7 @@ extension ImagesListViewController: UITableViewDataSource {
 
 extension ImagesListViewController: UITableViewDelegate {
 	func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-		if indexPath.row == photos.count - 1 {
-			presenter?.getImages()
-		}
+        presenter?.getImagesIfNeeded(at: indexPath)
 	}
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

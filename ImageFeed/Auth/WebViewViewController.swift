@@ -17,6 +17,7 @@ protocol WebViewViewControllerProtocol: AnyObject {
 	var presenter: WebViewPresenterProtocol? { get set }
 	func load(request: URLRequest)
 	func setProgressValue(_ newValue: Float)
+    func setProgressHidden(_ isHiddent: Bool)
 }
 
 final class WebViewViewController: UIViewController, WebViewViewControllerProtocol {
@@ -47,6 +48,10 @@ final class WebViewViewController: UIViewController, WebViewViewControllerProtoc
 	func setProgressValue(_ newValue: Float) {
 		progressBar.setProgress(newValue, animated: true)
 	}
+    
+    func setProgressHidden(_ isHiddent: Bool) {
+        progressBar.isHidden = isHiddent
+    }
 	
 	private func updateProgress() {
         let progress = Float(webView.estimatedProgress)

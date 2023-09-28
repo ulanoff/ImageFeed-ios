@@ -32,7 +32,7 @@ final class ImagesListPresenterSpy: ImagesListPresenterProtocol {
 		viewDidLoadCalled = true
 	}
 	
-	func getImages() {
+	func getImagesIfNeeded() {
 		
 	}
 	
