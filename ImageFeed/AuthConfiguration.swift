@@ -7,25 +7,26 @@
 
 import Foundation
 
-let UnsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
-let UnsplashTokenRequestURLString = "https://unsplash.com/oauth/token"
-let AccessKey = "EgPXrKU7MEhOIoYDEYGwzZ2rtUm5srzOijOWJh9ggSY"
-let SecretKey = "_Qw5ZFSV97maoYaliQ6ifkTigch4cH7TtKF9TskssaI"
-let RedirectURI = "urn:ietf:wg:oauth:2.0:oob"
-let AccessScope = "public+read_user+write_likes"
-let ResponseType = "code"
-let DefaultBaseURL = URL(string: "https://api.unsplash.com")!
-
+fileprivate struct Constants {
+    static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+    static let unsplashTokenRequestURLString = "https://unsplash.com/oauth/token"
+    static let accessKey = "EgPXrKU7MEhOIoYDEYGwzZ2rtUm5srzOijOWJh9ggSY"
+    static let secretKey = "_Qw5ZFSV97maoYaliQ6ifkTigch4cH7TtKF9TskssaI"
+    static let redirectURI = "urn:ietf:wg:oauth:2.0:oob"
+    static let accessScope = "public+read_user+write_likes"
+    static let responseType = "code"
+    static let defaultBaseURL = URL(string: "https://api.unsplash.com")!
+}
 struct AuthConfiguration {
 	static let standart = AuthConfiguration(
-		accessKey: AccessKey,
-		secretKey: SecretKey,
-		redirectURI: RedirectURI,
-		accessScope: AccessScope,
-		responseType: ResponseType,
-		defaultBaseURL: DefaultBaseURL,
-		authURLString: UnsplashAuthorizeURLString,
-		tokenRequestURLString: UnsplashTokenRequestURLString
+        accessKey: Constants.accessKey,
+        secretKey: Constants.secretKey,
+        redirectURI: Constants.redirectURI,
+        accessScope: Constants.accessScope,
+        responseType: Constants.responseType,
+        defaultBaseURL: Constants.defaultBaseURL,
+        authURLString: Constants.unsplashAuthorizeURLString,
+        tokenRequestURLString: Constants.unsplashTokenRequestURLString
 	)
 	
 	let accessKey: String
